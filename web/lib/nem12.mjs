@@ -1,5 +1,5 @@
-/* NEM12 parser — the AEMO standard interval-data format that distributor
- * portals (Ausgrid Energy Easy, Endeavour, etc.) hand out.
+/* NEM12 parser — the AEMO standard interval-data format that distributors
+ * send in response to a meter data request, and that retailers export.
  *
  * Structure:
  *   100  header

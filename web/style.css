@@ -54,10 +54,13 @@ body {
 
 /* ————— NMI entry ————— */
 .nmi-bar {
-  display: flex; align-items: center; gap: 18px;
-  flex-wrap: wrap; margin: 14px 0 10px;
+  display: flex; align-items: center; gap: 10px 22px;
+  flex-wrap: wrap; margin: 16px 0 10px;
 }
-.nmi-bar .field { display: flex; align-items: center; gap: 10px; }
+/* Labels sit above the inputs so the two boxes align with each other
+   regardless of how wide "NMI" and "Postcode" render. */
+.nmi-bar .fields { display: flex; gap: 14px; align-items: flex-end; }
+.nmi-bar .field { display: flex; flex-direction: column; gap: 6px; }
 .nmi-bar label {
   font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--ink-3); font-weight: 600; white-space: nowrap;
@@ -69,13 +72,12 @@ body {
   border: 1px solid var(--rule); background: var(--card); color: var(--ink);
   border-radius: 3px;
 }
-/* wide enough that an 11-character NMI never truncates */
-#nmi-input { width: 17ch; }
-#postcode-input { width: 8ch; }
-#nmi-input::placeholder, #postcode-input::placeholder {
-  color: var(--ink-3); letter-spacing: 0.04em; font-size: 15px;
-}
+/* box-sizing is border-box, so these widths must cover the 32px of padding
+   as well as the characters: 11 for a NMI, 4 for a postcode. */
+#nmi-input { width: 19ch; }
+#postcode-input { width: 10ch; }
 #nmi-input:focus, #postcode-input:focus { outline: 2px solid var(--credit); outline-offset: -1px; }
+.nmi-status:empty { display: none; }
 .nmi-status { font-size: 13px; color: var(--ink-2); max-width: 68ch; line-height: 1.5; }
 .nmi-status code {
   font-family: var(--mono); font-size: 12px;
@@ -90,7 +92,9 @@ body {
   font-family: var(--serif); font-weight: 600; font-size: 24px; margin: 0 0 8px;
 }
 .upload-lead { color: var(--ink-2); margin: 0 0 20px; max-width: 64ch; }
-.upload-lead em { font-style: normal; font-weight: 600; color: var(--ink); }
+.upload-lead b { color: var(--ink); }
+.upload-lead a { color: var(--supply); border-bottom: 1px solid rgba(58,103,201,0.4); text-decoration: none; }
+.upload-lead a:hover { border-bottom-color: var(--supply); }
 
 .dropzone {
   border: 2px dashed var(--rule);
