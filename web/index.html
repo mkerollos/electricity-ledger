@@ -19,7 +19,7 @@
       <div class="field">
         <label for="nmi-input">NMI</label>
         <input type="text" id="nmi-input" spellcheck="false" autocomplete="off"
-               maxlength="11" aria-describedby="nmi-status">
+               maxlength="11" placeholder="41021234567" aria-describedby="nmi-status">
       </div>
       <div class="field">
         <label for="postcode-input">Postcode</label>
@@ -34,16 +34,14 @@
 
 <section class="upload-panel" id="upload-panel">
   <h2>Load your usage data</h2>
-  <p class="upload-lead">
-    Every plan is priced against your own half-hourly meter readings, so you need
-    a year of interval data. Two ways to get it: ask your <b>retailer</b> (most
-    let you download it from your online account), or request it from your
-    <b>distributor</b> — on the Ausgrid network that's the
-    <a href="https://www.ausgrid.com.au/your-energy-use/your-meter-and-supply/access-your-meter-data"
-       target="_blank" rel="noopener">meter data request form</a>, which emails you
-    up to two years of data. Both the CSV retailers send and the official
-    <b>NEM12</b> file work here.
-  </p>
+  <p class="upload-lead">You can get your usage data as a CSV from:</p>
+  <ol class="sources">
+    <li>Your retailer's portal (e.g. Origin, EnergyAustralia)</li>
+    <li>Your distributor
+      (<a href="https://www.ausgrid.com.au/your-energy-use/your-meter-and-supply/access-your-meter-data" target="_blank" rel="noopener">Ausgrid</a>,
+      <a href="https://www.endeavourenergy.com.au/your-energy/your-electricity-meter/accessing-your-meter-data" target="_blank" rel="noopener">Endeavour</a>,
+      <a href="https://www.essentialenergy.com.au/web-forms/retail-customer-single-nmi-request" target="_blank" rel="noopener">Essential</a>, etc)</li>
+  </ol>
 
   <div class="dropzone" id="dropzone">
     <p class="drop-big">Drop your CSV or NEM12 file here</p>

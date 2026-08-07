@@ -21,12 +21,12 @@ recommends can be the wrong one by hundreds of dollars a year.
 
 ## Using it
 
-1. **Get your interval data.** Either from your retailer's online account, or by
-   requesting it from your distributor — on the Ausgrid network that's the
-   [meter data request form](https://www.ausgrid.com.au/your-energy-use/your-meter-and-supply/access-your-meter-data),
-   which emails you up to two years of data (you'll need your NMI, postcode, the
-   account holder's surname, and the dates). Both the CSV retailers send and the
-   official AEMO **NEM12** file work.
+1. **Get your interval data**, as a CSV from your retailer's portal, or from your
+   distributor —
+   [Ausgrid](https://www.ausgrid.com.au/your-energy-use/your-meter-and-supply/access-your-meter-data),
+   [Endeavour](https://www.endeavourenergy.com.au/your-energy/your-electricity-meter/accessing-your-meter-data),
+   [Essential](https://www.essentialenergy.com.au/web-forms/retail-customer-single-nmi-request).
+   Both retailer CSVs and the official AEMO **NEM12** file work.
 2. **Enter your NMI.** It's on any electricity bill. It identifies your
    distribution network, which determines what plans you can actually buy.
 3. **Adjust the assumptions.** EV charging volume, how much of it is overnight

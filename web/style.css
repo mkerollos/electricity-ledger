@@ -91,10 +91,11 @@ body {
 .upload-panel h2 {
   font-family: var(--serif); font-weight: 600; font-size: 24px; margin: 0 0 8px;
 }
-.upload-lead { color: var(--ink-2); margin: 0 0 20px; max-width: 64ch; }
-.upload-lead b { color: var(--ink); }
-.upload-lead a { color: var(--supply); border-bottom: 1px solid rgba(58,103,201,0.4); text-decoration: none; }
-.upload-lead a:hover { border-bottom-color: var(--supply); }
+.upload-lead { color: var(--ink-2); margin: 0 0 10px; max-width: 64ch; }
+.sources { color: var(--ink-2); margin: 0 0 22px; padding-left: 22px; max-width: 64ch; }
+.sources li { margin-bottom: 5px; }
+.sources a { color: var(--supply); border-bottom: 1px solid rgba(58,103,201,0.4); text-decoration: none; }
+.sources a:hover { border-bottom-color: var(--supply); }
 
 .dropzone {
   border: 2px dashed var(--rule);
