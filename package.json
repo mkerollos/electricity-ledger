@@ -1,0 +1,13 @@
+{
+  "name": "energy-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Rank Australian electricity plans against your own interval usage data",
+  "scripts": {
+    "fetch": "node scripts/fetch-plans.mjs",
+    "build": "node scripts/build-data.mjs",
+    "test": "node test/nmi.test.mjs && node test/usage.test.mjs && node test/engine.test.mjs",
+    "serve": "node scripts/serve.mjs"
+  }
+}

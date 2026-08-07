@@ -1,0 +1,122 @@
+{
+ "builtAt": "2026-08-07T21:47:44.754Z",
+ "networks": [
+  {
+   "key": "ausgrid",
+   "name": "Ausgrid",
+   "region": "NSW",
+   "file": "plans-ausgrid.json",
+   "planCount": 1471,
+   "brandCount": 28,
+   "ambiguous": null
+  },
+  {
+   "key": "endeavour",
+   "name": "Endeavour Energy",
+   "region": "NSW",
+   "file": "plans-endeavour.json",
+   "planCount": 1257,
+   "brandCount": 29,
+   "ambiguous": null
+  },
+  {
+   "key": "essential",
+   "name": "Essential Energy",
+   "region": "NSW",
+   "file": "plans-essential.json",
+   "planCount": 1435,
+   "brandCount": 29,
+   "ambiguous": "Essential Energy has separate Standard and Far West tariff zones. Plans from both are shown; check your bill for which applies."
+  },
+  {
+   "key": "evoenergy",
+   "name": "Evoenergy (ACT)",
+   "region": "ACT",
+   "file": "plans-evoenergy.json",
+   "planCount": 584,
+   "brandCount": 11,
+   "ambiguous": null
+  },
+  {
+   "key": "energex",
+   "name": "Energex",
+   "region": "QLD",
+   "file": "plans-energex.json",
+   "planCount": 1240,
+   "brandCount": 27,
+   "ambiguous": null
+  },
+  {
+   "key": "ergon",
+   "name": "Ergon Energy",
+   "region": "QLD",
+   "file": "plans-ergon.json",
+   "planCount": 56,
+   "brandCount": 5,
+   "ambiguous": null
+  },
+  {
+   "key": "sapn",
+   "name": "SA Power Networks",
+   "region": "SA",
+   "file": "plans-sapn.json",
+   "planCount": 565,
+   "brandCount": 27,
+   "ambiguous": null
+  },
+  {
+   "key": "citipower",
+   "name": "CitiPower",
+   "region": "VIC",
+   "file": "plans-citipower.json",
+   "planCount": 618,
+   "brandCount": 25,
+   "ambiguous": null
+  },
+  {
+   "key": "ausnet",
+   "name": "AusNet Services",
+   "region": "VIC",
+   "file": "plans-ausnet.json",
+   "planCount": 606,
+   "brandCount": 25,
+   "ambiguous": null
+  },
+  {
+   "key": "powercor",
+   "name": "Powercor",
+   "region": "VIC",
+   "file": "plans-powercor.json",
+   "planCount": 626,
+   "brandCount": 25,
+   "ambiguous": null
+  },
+  {
+   "key": "jemena",
+   "name": "Jemena",
+   "region": "VIC",
+   "file": "plans-jemena.json",
+   "planCount": 610,
+   "brandCount": 24,
+   "ambiguous": null
+  },
+  {
+   "key": "united",
+   "name": "United Energy",
+   "region": "VIC",
+   "file": "plans-united.json",
+   "planCount": 614,
+   "brandCount": 26,
+   "ambiguous": null
+  },
+  {
+   "key": "tasnetworks",
+   "name": "TasNetworks",
+   "region": "TAS",
+   "file": "plans-tasnetworks.json",
+   "planCount": 96,
+   "brandCount": 5,
+   "ambiguous": null
+  }
+ ]
+}

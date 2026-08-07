@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Electricity Ledger — rank plans against your own usage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Public+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-rule"></div>
+  <h1>The Electricity Ledger</h1>
+  <div class="nmi-bar">
+    <label for="nmi-input">NMI</label>
+    <input type="text" id="nmi-input" spellcheck="false" autocomplete="off"
+           maxlength="11" placeholder="10 or 11 characters"
+           aria-describedby="nmi-status">
+    <span id="nmi-status" class="nmi-status">Enter your NMI to find the plans sold on your network.</span>
+  </div>
+  <p class="masthead-sub">
+    <span>Find it on any electricity bill — it identifies your connection point and network.</span>
+    <span class="dot">·</span><span id="meta-line"></span>
+  </p>
+</header>
+
+<section class="upload-panel" id="upload-panel">
+  <h2>Load your usage data</h2>
+  <p class="upload-lead">
+    Every plan is priced against your own half-hourly meter readings, so you need
+    a year of interval data. Download it from your retailer's online account or
+    your distributor's portal — Ausgrid calls theirs <em>Energy Easy</em>. Both the
+    CSV retailers email out and the official <b>NEM12</b> file work.
+  </p>
+
+  <div class="dropzone" id="dropzone">
+    <p class="drop-big">Drop your CSV or NEM12 file here</p>
+    <p class="drop-or">or</p>
+    <button type="button" id="file-button">Choose a file</button>
+    <input type="file" id="file-input" accept=".csv,.txt,.dat,text/csv,text/plain" hidden>
+  </div>
+
+  <p class="privacy-note">
+    Your file is read in this browser and never uploaded. Nothing about your usage
+    leaves your device — the only thing this page downloads is the public plan data.
+  </p>
+
+  <p class="upload-error" id="upload-error" hidden></p>
+
+  <div class="mapping" id="mapping" hidden>
+    <h3>Which columns are which?</h3>
+    <p>The file's columns weren't recognised automatically. Match them up and we'll try again.</p>
+    <div class="map-grid">
+      <label>Date / time<select id="map-from"></select></label>
+      <label>Usage type<select id="map-type"></select></label>
+      <label>Amount<select id="map-amount"></select></label>
+      <label>Import column<select id="map-import"></select></label>
+      <label>Export column<select id="map-export"></select></label>
+    </div>
+    <p class="map-hint">
+      Use <b>usage type + amount</b> when each row is labelled Consumption or Feed In,
+      or <b>import/export columns</b> when each row carries both figures.
+    </p>
+    <button type="button" id="mapping-apply">Use these columns</button>
+  </div>
+</section>
+
+<div id="results" hidden>
+
+<section class="usage-bar">
+  <div id="usage-summary"></div>
+  <button type="button" id="replace-usage" class="linkish">Use a different file</button>
+</section>
+
+<p class="needs-nmi" id="needs-nmi" hidden>Enter your NMI above to see plans for your network.</p>
+
+<section class="stats" id="stats"></section>
+
+<section class="controls" id="controls">
+  <div class="controls-head">
+    <h2>Assumptions</h2>
+    <span class="controls-note">bills recompute against all 17,520 half-hour readings</span>
+  </div>
+  <div class="controls-grid">
+    <div class="ctl">
+      <label for="ev-kwh">EV charging <output id="ev-kwh-out">2,250</output> kWh / yr</label>
+      <input type="range" id="ev-kwh" min="0" max="6000" step="50" value="2250">
+      <div class="ctl-hint">≈ <span id="ev-km">15,000</span> km at 15 kWh/100km</div>
+    </div>
+    <div class="ctl">
+      <label for="ev-split">Overnight grid share <output id="ev-split-out">50%</output></label>
+      <input type="range" id="ev-split" min="0" max="100" step="5" value="50">
+      <div class="ctl-hint">rest charges from daytime solar surplus (9am–4pm)</div>
+    </div>
+    <div class="ctl">
+      <label>Overnight window</label>
+      <div class="ctl-row">
+        <select id="night-start"></select>
+        <span class="ctl-arrow">→</span>
+        <select id="night-end"></select>
+      </div>
+      <div class="ctl-hint">when the car draws from the grid</div>
+    </div>
+    <div class="ctl ctl-toggles">
+      <label class="tog"><input type="checkbox" id="opt-conditional"> count conditional discounts <span class="tog-hint">(pay-on-time, direct debit)</span></label>
+      <label class="tog"><input type="checkbox" id="opt-restricted"> show membership / restricted plans</label>
+      <label class="tog"><input type="checkbox" id="opt-all-plans"> show every plan <span class="tog-hint">(not just each retailer's best)</span></label>
+    </div>
+  </div>
+</section>
+
+<section class="table-zone">
+  <div class="table-tools">
+    <input type="search" id="search" placeholder="Filter retailer or plan…">
+    <span id="count-line" class="count-line"></span>
+  </div>
+  <div class="table-scroll">
+    <table id="rank-table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Retailer</th>
+          <th>Plan</th>
+          <th class="num">Annual cost</th>
+          <th class="num">vs best</th>
+          <th class="num">Supply</th>
+          <th class="num">Usage</th>
+          <th class="num">Solar credit</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="rank-body"></tbody>
+    </table>
+  </div>
+</section>
+
+</div><!-- /#results -->
+
+<footer class="colophon">
+  <p>Rates from the government Energy Made Easy / Consumer Data Right product-reference APIs,
+  matched to your network via the AEMO NMI allocation table. Charges shown inc. GST; feed-in
+  credits are GST-free. Costs are simulated against the loaded interval data plus the EV
+  assumptions above — not a quote. Demand-window and wholesale plans carry caveats; check the
+  fine print before switching.</p>
+</footer>
+
+<div class="drawer-scrim" id="drawer-scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-inner" id="drawer-inner"></div>
+</aside>
+
+<div class="busy" id="busy"><div class="busy-chip">recomputing…</div></div>
+
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

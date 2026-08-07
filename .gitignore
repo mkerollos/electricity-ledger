@@ -1,0 +1,13 @@
+# Raw CDR API cache — ~100MB of upstream JSON, regenerate with `npm run fetch`.
+# Leading slash anchors this to the repo root so web/data (the built plan
+# bundles the site actually serves) is still tracked.
+/data/
+
+# Personal interval data must never be committed: a year of half-hourly
+# readings reveals household occupancy patterns.
+*.csv
+!test/fixtures/**/*.csv
+web/data/usage.json
+
+node_modules/
+.DS_Store
