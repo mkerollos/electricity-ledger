@@ -15,10 +15,17 @@
   <div class="masthead-rule"></div>
   <h1>The Electricity Ledger</h1>
   <div class="nmi-bar">
-    <label for="nmi-input">NMI</label>
-    <input type="text" id="nmi-input" spellcheck="false" autocomplete="off"
-           maxlength="11" placeholder="10 or 11 characters"
-           aria-describedby="nmi-status">
+    <span class="field">
+      <label for="nmi-input">NMI</label>
+      <input type="text" id="nmi-input" spellcheck="false" autocomplete="off"
+             maxlength="11" placeholder="4102690550X"
+             aria-describedby="nmi-status">
+    </span>
+    <span class="field">
+      <label for="postcode-input">Postcode</label>
+      <input type="text" id="postcode-input" spellcheck="false" autocomplete="postal-code"
+             inputmode="numeric" maxlength="4" placeholder="optional">
+    </span>
     <span id="nmi-status" class="nmi-status">Enter your NMI to find the plans sold on your network.</span>
   </div>
   <p class="masthead-sub">

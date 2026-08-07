@@ -4,12 +4,14 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as Engine from "../web/engine.mjs";
 import { parseUsage } from "../web/lib/usage.mjs";
+import { servesPostcode } from "../web/lib/normalize.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // Usage is parsed from the CSV at test time — it is deliberately not a build
 // artifact, since personal interval data must never ship with the app.
 const usage = parseUsage(readFileSync(join(ROOT, "actual_usage.csv"), "utf8"), { region: "NSW" });
-const plans = JSON.parse(readFileSync(join(ROOT, "web/data/plans-ausgrid.json"))).plans;
+const ausgrid = JSON.parse(readFileSync(join(ROOT, "web/data/plans-ausgrid.json")));
+const plans = ausgrid.plans;
 
 let fail = 0;
 const approx = (a, b, tol, label) => {
@@ -17,6 +19,10 @@ const approx = (a, b, tol, label) => {
     console.error(`FAIL ${label}: got ${a.toFixed(2)}, want ${b.toFixed(2)}`);
     fail++;
   } else console.log(`ok   ${label}: ${a.toFixed(2)}`);
+};
+const ok = (cond, label, extra) => {
+  if (cond) console.log(`ok   ${label}${extra ? " — " + extra : ""}`);
+  else { console.error(`FAIL ${label}${extra ? " — " + extra : ""}`); fail++; }
 };
 
 const series = {
@@ -117,6 +123,40 @@ if (glo) {
   else console.log(`ok   swept ${totals.length} plans, 0 errors, ${unsupported} unsupported`);
   totals.sort((a, b) => a - b);
   console.log(`     cheapest $${totals[0].toFixed(0)}, median $${totals[totals.length >> 1].toFixed(0)}, dearest $${totals.at(-1).toFixed(0)}`);
+}
+
+// --- 5. postcode availability: a NMI alone doesn't determine what's for sale
+{
+  const sets = ausgrid.postcodeSets || [];
+  const avail = (pc) => plans.filter((p) =>
+    p.pcSet == null || servesPostcode(sets[p.pcSet], pc));
+
+  // 2212 is ordinary Ausgrid territory: every plan is sold there.
+  const at2212 = avail("2212");
+  approx(at2212.length, plans.length, 0, "all Ausgrid plans available at 2212");
+
+  // 2109 is the documented outlier — only a small minority serve it.
+  const at2109 = avail("2109");
+  ok(at2109.length > 0 && at2109.length < plans.length * 0.1,
+     "2109 restricted to a small subset", `${at2109.length} of ${plans.length}`);
+
+  // Essential Energy: filtering must remove a retailer that isn't sold there.
+  const ess = JSON.parse(readFileSync(join(ROOT, "web/data/plans-essential.json")));
+  const cheapest = (pc) => {
+    const list = ess.plans
+      .filter((p) => !p.restricted && (!pc || p.pcSet == null || servesPostcode(ess.postcodeSets[p.pcSet], pc)))
+      .map((p) => ({ p, b: Engine.computeBill(p, usage, series, {}) }))
+      .filter((x) => !x.b.unsupported)
+      .sort((a, b) => a.b.baseTotal - b.b.baseTotal);
+    return list[0];
+  };
+  const anywhere = cheapest(null);
+  const at2340 = cheapest("2340");
+  ok(anywhere.p.brandName !== at2340.p.brandName,
+     "postcode changes Essential's top plan (the bug this guards)",
+     `${anywhere.p.brandName} -> ${at2340.p.brandName}`);
+  ok(at2340.b.baseTotal >= anywhere.b.baseTotal,
+     "filtered best is never cheaper than the unfiltered best");
 }
 
 console.log(fail === 0 ? "\nengine: all passed" : `\nengine: ${fail} FAILED`);

@@ -39,12 +39,33 @@ async function buildPlans() {
                  { cdrNames: net.cdrNames }));
     if (!plans.length) continue;
 
-    // distributors are only needed for bundling; drop from the payload
-    const payload = plans.map(({ distributors, ...rest }) => rest);
+    // Intern the postcode lists: across ~9,200 plans there are only ~34
+    // distinct sets, so storing an index per plan costs almost nothing while
+    // letting the app tell which plans are actually sold at an address.
+    const postcodeSets = [];
+    const setIndex = new Map();
+    const internSet = (inc, exc) => {
+      if (!inc && !(exc && exc.length)) return null;
+      const key = JSON.stringify([inc || null, exc || null]);
+      if (!setIndex.has(key)) {
+        setIndex.set(key, postcodeSets.length);
+        postcodeSets.push({ inc: inc || null, exc: exc && exc.length ? exc : null });
+      }
+      return setIndex.get(key);
+    };
+
+    const payload = plans.map((p) => {
+      // distributors and raw postcodes are bundling inputs, not payload
+      const { distributors, includedPostcodes, excludedPostcodes, ...rest } = p;
+      const pcSet = internSet(includedPostcodes, excludedPostcodes);
+      return pcSet == null ? rest : { ...rest, pcSet };
+    });
+
     const file = `plans-${net.key}.json`;
     await writeFile(join(OUT, file), JSON.stringify({
       network: { key: net.key, name: net.name, region: net.region },
       builtAt: index.builtAt,
+      postcodeSets,
       plans: payload,
     }));
     const bytes = (await stat(join(OUT, file))).size;
@@ -52,10 +73,12 @@ async function buildPlans() {
       key: net.key, name: net.name, region: net.region, file,
       planCount: plans.length,
       brandCount: new Set(plans.map((p) => p.brandName)).size,
+      postcodeRestricted: postcodeSets.length > 1,
       ambiguous: net.ambiguous || null,
     });
     console.log(`  ${net.key.padEnd(13)} ${String(plans.length).padStart(5)} plans  ` +
       `${String(new Set(plans.map((p) => p.brandName)).size).padStart(3)} brands  ` +
+      `${String(postcodeSets.length).padStart(2)} pc-sets  ` +
       `${(bytes / 1e6).toFixed(1)} MB`);
   }
 

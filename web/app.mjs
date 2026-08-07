@@ -4,6 +4,7 @@
 import * as Engine from "./engine.mjs";
 import { parseNmi } from "./lib/nmi.mjs";
 import { parseUsage, detectColumns } from "./lib/usage.mjs";
+import { servesPostcode } from "./lib/normalize.mjs";
 
 {
   const $ = (id) => document.getElementById(id);
@@ -13,9 +14,11 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const NMI_KEY = "ledger.nmi";
+  const POSTCODE_KEY = "ledger.postcode";
   const USAGE_KEY = "ledger.usage";
 
   let usage = null, plans = [], catalogue = null, network = null;
+  let postcodeSets = [], postcode = "";
   let results = [];          // [{plan, bill}] sorted
   let pendingFile = null;    // {text, header} awaiting a column mapping
 
@@ -41,9 +44,10 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
     if (savedUsage) {
       try { usage = JSON.parse(savedUsage); } catch { localStorage.removeItem(USAGE_KEY); }
     }
+    postcode = localStorage.getItem(POSTCODE_KEY) || "";
+    if (postcode) $("postcode-input").value = postcode;
     const savedNmi = localStorage.getItem(NMI_KEY);
-    if (savedNmi) $("nmi-input").value = savedNmi;
-    if (savedNmi) applyNmi(savedNmi);
+    if (savedNmi) { $("nmi-input").value = savedNmi; applyNmi(savedNmi); }
     updateStage();
   }).catch((e) => {
     $("nmi-status").innerHTML = `<span class="nmi-err">Couldn't load plan data: ${esc(e.message)}</span>`;
@@ -195,6 +199,10 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
     ];
     if (parsed.warning) bits.push(`<span class="nmi-warn">${esc(parsed.warning)}</span>`);
     if (parsed.ambiguous) bits.push(`<span class="nmi-warn">${esc(parsed.ambiguous)}</span>`);
+    if (entry.postcodeRestricted && !postcode) {
+      bits.push(`<span class="nmi-warn">Some retailers only sell parts of this network — ` +
+        `add your postcode to drop plans you can't actually buy.</span>`);
+    }
     status.innerHTML = bits.join(" · ");
 
     if (network?.key === entry.key) { updateStage(); return; }   // already loaded
@@ -205,6 +213,7 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
       .then((r) => r.json())
       .then((p) => {
         plans = p.plans;
+        postcodeSets = p.postcodeSets || [];
         $("meta-line").textContent =
           `${plans.length} plans · ${new Set(plans.map((x) => x.brandName)).size} retailers · ` +
           `${entry.name} · built ${(catalogue.builtAt || "").slice(0, 10)}`;
@@ -261,6 +270,16 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
     $("nmi-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") applyNmi($("nmi-input").value);
     });
+
+    const postcodeChanged = debounce(() => {
+      const v = $("postcode-input").value.trim();
+      postcode = /^\d{4}$/.test(v) ? v : "";
+      if (postcode) localStorage.setItem(POSTCODE_KEY, postcode);
+      else localStorage.removeItem(POSTCODE_KEY);
+      if (network) applyNmi($("nmi-input").value);   // refresh the status line
+      render();
+    }, 350);
+    $("postcode-input").addEventListener("input", postcodeChanged);
   }
 
   function debounce(fn, ms) {
@@ -304,8 +323,16 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
 
   // ----------------------------------------------------------- render ----
 
+  /** Is this plan actually sold at the entered postcode? */
+  function availableHere(plan) {
+    if (!postcode || plan.pcSet == null) return true;
+    return servesPostcode(postcodeSets[plan.pcSet], postcode);
+  }
+
   function visibleResults() {
     let list = results;
+    // Postcode exclusion comes first: these plans can't be bought at all.
+    list = list.filter((r) => availableHere(r.plan));
     if (!state.showRestricted) list = list.filter((r) => !r.plan.restricted);
     if (state.search) {
       list = list.filter((r) =>
@@ -376,9 +403,11 @@ import { parseUsage, detectColumns } from "./lib/usage.mjs";
       </tr>`);
     });
     $("rank-body").innerHTML = rows.join("");
+    const excluded = postcode ? results.filter((r) => !availableHere(r.plan)).length : 0;
     $("count-line").textContent = `${list.length} of ${results.length} plans shown` +
       (state.showAll ? "" : " · best per retailer") +
-      (state.showRestricted ? "" : " · membership plans hidden");
+      (state.showRestricted ? "" : " · membership plans hidden") +
+      (excluded ? ` · ${excluded} not sold in ${postcode}` : "");
 
     for (const tr of $("rank-body").querySelectorAll("tr")) {
       tr.addEventListener("click", () => openDrawer(tr.dataset.pid));

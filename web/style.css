@@ -54,21 +54,28 @@ body {
 
 /* ————— NMI entry ————— */
 .nmi-bar {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 18px;
   flex-wrap: wrap; margin: 14px 0 10px;
 }
+.nmi-bar .field { display: flex; align-items: center; gap: 10px; }
 .nmi-bar label {
   font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--ink-3); font-weight: 600;
+  color: var(--ink-3); font-weight: 600; white-space: nowrap;
 }
-#nmi-input {
+#nmi-input, #postcode-input {
   font-family: var(--mono); font-size: 17px; font-weight: 500;
-  letter-spacing: 0.06em;
-  padding: 8px 14px; width: 13ch;
+  letter-spacing: 0.08em;
+  padding: 9px 16px;
   border: 1px solid var(--rule); background: var(--card); color: var(--ink);
   border-radius: 3px;
 }
-#nmi-input:focus { outline: 2px solid var(--credit); outline-offset: -1px; }
+/* wide enough that an 11-character NMI never truncates */
+#nmi-input { width: 17ch; }
+#postcode-input { width: 8ch; }
+#nmi-input::placeholder, #postcode-input::placeholder {
+  color: var(--ink-3); letter-spacing: 0.04em; font-size: 15px;
+}
+#nmi-input:focus, #postcode-input:focus { outline: 2px solid var(--credit); outline-offset: -1px; }
 .nmi-status { font-size: 13px; color: var(--ink-2); max-width: 68ch; line-height: 1.5; }
 .nmi-status code {
   font-family: var(--mono); font-size: 12px;

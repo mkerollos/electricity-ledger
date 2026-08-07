@@ -302,6 +302,11 @@ export function normalizePlan(d, opts = {}) {
     pricingModel: ec.pricingModel || null,
     timeZone: ec.timeZone || "LOCAL",
     distributors: d.geography?.distributors || [],
+    // Retailers restrict some plans to a subset of a network's postcodes, so
+    // the distributor alone doesn't determine availability. build-data interns
+    // these into a shared table and replaces them with an index.
+    includedPostcodes: d.geography?.includedPostcodes || null,
+    excludedPostcodes: d.geography?.excludedPostcodes || null,
     tariffPeriods,
     demandCharges,
     fitGroups: normFit(ec.solarFeedInTariff),
@@ -334,6 +339,17 @@ export function planServes(plan, { postcode, cdrNames }) {
     if (postcodeIn(geo.excludedPostcodes, postcode)) return false;
     if (geo.includedPostcodes && !postcodeIn(geo.includedPostcodes, postcode)) return false;
   }
+  return true;
+}
+
+/**
+ * Is a plan sold at this postcode? `set` is an entry from a bundle's
+ * interned postcodeSets table ({inc, exc}); a null set means unrestricted.
+ */
+export function servesPostcode(set, postcode) {
+  if (!set || !postcode) return true;
+  if (postcodeIn(set.exc, postcode)) return false;
+  if (set.inc && !postcodeIn(set.inc, postcode)) return false;
   return true;
 }
 

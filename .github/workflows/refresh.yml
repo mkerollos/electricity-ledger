@@ -1,0 +1,76 @@
+name: Refresh plan data
+
+# Retailers add and withdraw plans daily, and rates reset at the start of the
+# financial year. This re-fetches from the CDR APIs and commits any change,
+# which in turn triggers the Pages deploy workflow.
+on:
+  schedule:
+    - cron: "0 17 * * 0"        # Sundays 03:00 Sydney (17:00 UTC)
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Re-fetch every plan detail, not just new ones"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      # The raw API cache isn't committed, so restore it between runs to avoid
+      # re-downloading ~9,000 plan details every week.
+      - name: Restore CDR cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data/raw
+          key: cdr-raw-${{ github.run_id }}
+          restore-keys: cdr-raw-
+
+      - name: Fetch plans
+        run: |
+          if [ "${{ inputs.full }}" = "true" ]; then
+            node scripts/fetch-plans.mjs --refresh
+          else
+            node scripts/fetch-plans.mjs --refresh-lists
+          fi
+
+      - name: Rebuild bundles
+        run: node scripts/build-data.mjs
+
+      - name: Test
+        run: |
+          node test/nmi.test.mjs
+          node test/usage.test.mjs
+
+      - name: Save CDR cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: data/raw
+          key: cdr-raw-${{ github.run_id }}
+
+      - name: Commit any change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- web/data; then
+            echo "No plan changes this week."
+            exit 0
+          fi
+          git add web/data
+          PLANS=$(node -e "const i=require('./web/data/index.json');console.log(i.networks.reduce((a,n)=>a+n.planCount,0))")
+          git commit -m "Refresh plan data ($PLANS plans)"
+          git push
