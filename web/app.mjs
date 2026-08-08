@@ -243,18 +243,29 @@ import { servesPostcode } from "./lib/normalize.mjs";
     $("night-start").value = state.nightStart;
     $("night-end").value = state.nightEnd;
 
+    // The filled part of a slider track is drawn with a gradient, so the
+    // percentage has to be pushed back into CSS whenever the value changes.
+    const paintSlider = (el) => {
+      const min = +el.min, max = +el.max;
+      el.style.setProperty("--pct", `${((el.value - min) / (max - min)) * 100}%`);
+    };
+
     const debounced = debounce(recompute, 300);
     $("ev-kwh").addEventListener("input", () => {
       state.evKwh = +$("ev-kwh").value;
-      $("ev-kwh-out").textContent = fmtK(state.evKwh);
+      paintSlider($("ev-kwh"));
+      $("ev-kwh-out").textContent = `${fmtK(state.evKwh)} kWh/yr`;
       $("ev-km").textContent = fmtK(state.evKwh / 15 * 100);
       debounced();
     });
     $("ev-split").addEventListener("input", () => {
       state.nightShare = +$("ev-split").value / 100;
+      paintSlider($("ev-split"));
       $("ev-split-out").textContent = $("ev-split").value + "%";
       debounced();
     });
+    paintSlider($("ev-kwh"));
+    paintSlider($("ev-split"));
     $("night-start").addEventListener("change", () => { state.nightStart = +$("night-start").value; recompute(); });
     $("night-end").addEventListener("change", () => { state.nightEnd = +$("night-end").value; recompute(); });
     $("opt-conditional").addEventListener("change", () => { state.conditional = $("opt-conditional").checked; rerank(); });

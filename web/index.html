@@ -39,7 +39,7 @@
     <li>Your retailer's portal (e.g. Origin, EnergyAustralia)</li>
     <li>Your distributor
       (<a href="https://www.ausgrid.com.au/your-energy-use/your-meter-and-supply/access-your-meter-data" target="_blank" rel="noopener">Ausgrid</a>,
-      <a href="https://www.endeavourenergy.com.au/your-energy/your-electricity-meter/accessing-your-meter-data" target="_blank" rel="noopener">Endeavour</a>,
+      <a href="https://www.endeavourenergy.com.au/for-your-home/energy-use-and-bills/meter-form" target="_blank" rel="noopener">Endeavour</a>,
       <a href="https://www.essentialenergy.com.au/web-forms/retail-customer-single-nmi-request" target="_blank" rel="noopener">Essential</a>, etc)</li>
   </ol>
 
@@ -93,28 +93,45 @@
   </div>
   <div class="controls-grid">
     <div class="ctl">
-      <label for="ev-kwh">EV charging <output id="ev-kwh-out">2,250</output> kWh / yr</label>
-      <input type="range" id="ev-kwh" min="0" max="6000" step="50" value="2250">
-      <div class="ctl-hint">≈ <span id="ev-km">15,000</span> km at 15 kWh/100km</div>
-    </div>
-    <div class="ctl">
-      <label for="ev-split">Overnight grid share <output id="ev-split-out">50%</output></label>
-      <input type="range" id="ev-split" min="0" max="100" step="5" value="50">
-      <div class="ctl-hint">rest charges from daytime solar surplus (9am–4pm)</div>
-    </div>
-    <div class="ctl">
-      <label>Overnight window</label>
-      <div class="ctl-row">
-        <select id="night-start"></select>
-        <span class="ctl-arrow">→</span>
-        <select id="night-end"></select>
+      <div class="ctl-top">
+        <label for="ev-kwh">EV charging</label>
+        <output id="ev-kwh-out" for="ev-kwh">2,250 kWh/yr</output>
       </div>
-      <div class="ctl-hint">when the car draws from the grid</div>
+      <input type="range" id="ev-kwh" min="0" max="6000" step="50" value="2250">
+      <p class="ctl-hint">≈ <span id="ev-km">15,000</span> km at 15 kWh/100km</p>
     </div>
-    <div class="ctl ctl-toggles">
-      <label class="tog"><input type="checkbox" id="opt-conditional"> count conditional discounts <span class="tog-hint">(pay-on-time, direct debit)</span></label>
-      <label class="tog"><input type="checkbox" id="opt-restricted"> show membership / restricted plans</label>
-      <label class="tog"><input type="checkbox" id="opt-all-plans"> show every plan <span class="tog-hint">(not just each retailer's best)</span></label>
+
+    <div class="ctl">
+      <div class="ctl-top">
+        <label for="ev-split">Overnight grid share</label>
+        <output id="ev-split-out" for="ev-split">50%</output>
+      </div>
+      <input type="range" id="ev-split" min="0" max="100" step="5" value="50">
+      <p class="ctl-hint">the rest charges from daytime solar surplus</p>
+    </div>
+
+    <div class="ctl">
+      <div class="ctl-top">
+        <label for="night-start">Overnight window</label>
+      </div>
+      <div class="ctl-row">
+        <select id="night-start" aria-label="Overnight window start"></select>
+        <span class="ctl-arrow" aria-hidden="true">→</span>
+        <select id="night-end" aria-label="Overnight window end"></select>
+      </div>
+      <p class="ctl-hint">when the car draws from the grid</p>
+    </div>
+
+    <div class="ctl">
+      <div class="ctl-top"><span class="ctl-legend">Include</span></div>
+      <div class="toggles">
+        <label class="tog"><input type="checkbox" id="opt-conditional">
+          <span>Conditional discounts <span class="tog-hint">pay-on-time, direct debit</span></span></label>
+        <label class="tog"><input type="checkbox" id="opt-restricted">
+          <span>Membership &amp; restricted plans</span></label>
+        <label class="tog"><input type="checkbox" id="opt-all-plans">
+          <span>Every plan <span class="tog-hint">not just each retailer's best</span></span></label>
+      </div>
     </div>
   </div>
 </section>
