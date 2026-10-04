@@ -1,12 +1,12 @@
 {
- "builtAt": "2026-09-27T20:06:22.744Z",
+ "builtAt": "2026-10-04T20:09:34.790Z",
  "networks": [
   {
    "key": "ausgrid",
    "name": "Ausgrid",
    "region": "NSW",
    "file": "plans-ausgrid.json",
-   "planCount": 1401,
+   "planCount": 2119,
    "brandCount": 28,
    "postcodeRestricted": true,
    "ambiguous": null
@@ -16,7 +16,7 @@
    "name": "Endeavour Energy",
    "region": "NSW",
    "file": "plans-endeavour.json",
-   "planCount": 1356,
+   "planCount": 2067,
    "brandCount": 29,
    "postcodeRestricted": true,
    "ambiguous": null
@@ -26,7 +26,7 @@
    "name": "Essential Energy",
    "region": "NSW",
    "file": "plans-essential.json",
-   "planCount": 1562,
+   "planCount": 2422,
    "brandCount": 29,
    "postcodeRestricted": true,
    "ambiguous": "Essential Energy has separate Standard and Far West tariff zones. Plans from both are shown; check your bill for which applies."
@@ -36,7 +36,7 @@
    "name": "Evoenergy (ACT)",
    "region": "ACT",
    "file": "plans-evoenergy.json",
-   "planCount": 533,
+   "planCount": 934,
    "brandCount": 11,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -46,7 +46,7 @@
    "name": "Energex",
    "region": "QLD",
    "file": "plans-energex.json",
-   "planCount": 1278,
+   "planCount": 1872,
    "brandCount": 26,
    "postcodeRestricted": true,
    "ambiguous": null
@@ -56,7 +56,7 @@
    "name": "Ergon Energy",
    "region": "QLD",
    "file": "plans-ergon.json",
-   "planCount": 96,
+   "planCount": 182,
    "brandCount": 5,
    "postcodeRestricted": true,
    "ambiguous": null
@@ -66,7 +66,7 @@
    "name": "SA Power Networks",
    "region": "SA",
    "file": "plans-sapn.json",
-   "planCount": 626,
+   "planCount": 972,
    "brandCount": 26,
    "postcodeRestricted": true,
    "ambiguous": null
@@ -76,7 +76,7 @@
    "name": "CitiPower",
    "region": "VIC",
    "file": "plans-citipower.json",
-   "planCount": 595,
+   "planCount": 1046,
    "brandCount": 25,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -86,7 +86,7 @@
    "name": "AusNet Services",
    "region": "VIC",
    "file": "plans-ausnet.json",
-   "planCount": 593,
+   "planCount": 1032,
    "brandCount": 25,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -96,7 +96,7 @@
    "name": "Powercor",
    "region": "VIC",
    "file": "plans-powercor.json",
-   "planCount": 598,
+   "planCount": 1046,
    "brandCount": 25,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -106,7 +106,7 @@
    "name": "Jemena",
    "region": "VIC",
    "file": "plans-jemena.json",
-   "planCount": 588,
+   "planCount": 1032,
    "brandCount": 25,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -116,7 +116,7 @@
    "name": "United Energy",
    "region": "VIC",
    "file": "plans-united.json",
-   "planCount": 597,
+   "planCount": 1049,
    "brandCount": 26,
    "postcodeRestricted": false,
    "ambiguous": null
@@ -126,7 +126,7 @@
    "name": "TasNetworks",
    "region": "TAS",
    "file": "plans-tasnetworks.json",
-   "planCount": 74,
+   "planCount": 86,
    "brandCount": 4,
    "postcodeRestricted": false,
    "ambiguous": null
